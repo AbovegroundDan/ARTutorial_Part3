@@ -10,12 +10,15 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     var sceneController = HoverScene()
 
     var didInitializeScene: Bool = false
+    var planes = [ARPlaneAnchor: Plane]()
+    let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    var visibleGrid: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +28,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
-        
+        //sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+
         // Create a new scene
         if let scene = sceneController.scene {
             // Set the scene to the view
@@ -33,15 +37,33 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.didTapScreen))
+        tapRecognizer.numberOfTapsRequired = 1
+        tapRecognizer.numberOfTouchesRequired = 1
         self.view.addGestureRecognizer(tapRecognizer)
+        
+        let doubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.didDoubleTapScreen))
+        doubleTapRecognizer.numberOfTapsRequired = 2
+        doubleTapRecognizer.numberOfTouchesRequired = 1
+        self.view.addGestureRecognizer(doubleTapRecognizer)
+        
+        feedbackGenerator.prepare()
     }
     
+    
+    @objc func didPinchScreen(recognizer: UIGestureRecognizer) {
+        if didInitializeScene {
+         }
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = [.horizontal]
 
+        sceneView.session.delegate = self
+        
         // Run the view's session
         sceneView.session.run(configuration)
     }
@@ -62,13 +84,31 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Release any cached data, images, etc that aren't in use.
     }
 
+    @objc func didDoubleTapScreen(recognizer: UITapGestureRecognizer) {
+        if didInitializeScene {
+            self.visibleGrid = !self.visibleGrid
+            planes.forEach({ (_, plane) in
+                plane.setPlaneVisibility(self.visibleGrid)
+            })
+        }
+    }
+    
     @objc func didTapScreen(recognizer: UITapGestureRecognizer) {
         if didInitializeScene {
             if let camera = sceneView.session.currentFrame?.camera {
                 let tapLocation = recognizer.location(in: sceneView)
                 let hitTestResults = sceneView.hitTest(tapLocation)
-                if let node = hitTestResults.first?.node, let scene = sceneController.scene, let sphere = node.topmost(until: scene.rootNode) as? Sphere {
-                    sphere.animate()
+                if let node = hitTestResults.first?.node, let scene = sceneController.scene {
+                    if let sphere = node.topmost(until: scene.rootNode) as? Sphere {
+                        sphere.animate()
+                    } else if let plane = node.parent as? Plane, let planeParent = plane.parent, let hitResult = hitTestResults.first {
+                        let textPos = SCNVector3Make(
+                            hitResult.worldCoordinates.x,
+                            hitResult.worldCoordinates.y,
+                            hitResult.worldCoordinates.z
+                        )
+                        sceneController.addText(string: "Hello", parent: planeParent, position: textPos)
+                    }
                 }
                 else {
                     var translation = matrix_identity_float4x4
@@ -80,6 +120,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
         }
     }
+    
     // MARK: - ARSCNViewDelegate
     
 /*
@@ -90,6 +131,50 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return node
     }
 */
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        DispatchQueue.main.async {
+            if let planeAnchor = anchor as? ARPlaneAnchor {
+                self.addPlane(node: node, anchor: planeAnchor)
+                self.feedbackGenerator.impactOccurred()
+            }
+        }
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        DispatchQueue.main.async {
+            if let planeAnchor = anchor as? ARPlaneAnchor {
+                self.updatePlane(anchor: planeAnchor)
+            }
+        }
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
+
+    }
+    
+
+    func addPlane(node: SCNNode, anchor: ARPlaneAnchor) {
+        let plane = Plane(anchor)
+        planes[anchor] = plane
+        plane.setPlaneVisibility(self.visibleGrid)
+
+        node.addChildNode(plane)
+        print("Added plane: \(plane)")
+    }
+    
+    func updatePlane(anchor: ARPlaneAnchor) {
+        if let plane = planes[anchor] {
+            plane.update(anchor)
+        }
+    }
+    
+    func removePlane(anchor: ARPlaneAnchor) {
+        if let plane = planes.removeValue(forKey: anchor) {
+            plane.removeFromParentNode()
+        }
+    }
+
+
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if let camera = sceneView.session.currentFrame?.camera {
             didInitializeScene = true

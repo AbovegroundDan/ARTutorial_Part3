@@ -37,6 +37,10 @@ struct HoverScene {
         let directionalLight = SCNLight()
         directionalLight.type = .directional
         directionalLight.color = UIColor(white: 0.8, alpha: 1.0)
+        directionalLight.shadowRadius = 5.0
+        directionalLight.shadowColor = UIColor.black.withAlphaComponent(0.6)
+        directionalLight.castsShadow = true
+        directionalLight.shadowMode = .deferred
         let directionalNode = SCNNode()
         directionalNode.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(-40), GLKMathDegreesToRadians(0), GLKMathDegreesToRadians(0))
         directionalNode.light = directionalLight
@@ -61,6 +65,39 @@ struct HoverScene {
 
         scene.rootNode.addChildNode(sphere)
         sphere.runAction(scaleAction, forKey: "scaleAction")
+    }
+    
+    func addText(string: String, parent: SCNNode, position: SCNVector3 = SCNVector3Zero) {
+        guard let scene = self.scene else { return }
+
+        let textNode = self.createTextNode(string: string)
+        textNode.position = scene.rootNode.convertPosition(position, to: parent)
+
+        parent.addChildNode(textNode)
+    }
+    
+    func createTextNode(string: String) -> SCNNode {
+        let text = SCNText(string: string, extrusionDepth: 0.1)
+        text.font = UIFont.systemFont(ofSize: 1.0)
+        text.flatness = 0.01
+        text.firstMaterial?.diffuse.contents = UIColor.white
+
+        let textNode = SCNNode(geometry: text)
+        textNode.castsShadow = true
+        
+        let fontSize = Float(0.04)
+        textNode.scale = SCNVector3(fontSize, fontSize, fontSize)
+
+        var minVec = SCNVector3Zero
+        var maxVec = SCNVector3Zero
+        (minVec, maxVec) =  textNode.boundingBox
+        textNode.pivot = SCNMatrix4MakeTranslation(
+            minVec.x + (maxVec.x - minVec.x)/2,
+            minVec.y,
+            minVec.z + (maxVec.z - minVec.z)/2
+        )
+
+        return textNode
     }
     
     func easeOutElastic(_ t: Float) -> Float {

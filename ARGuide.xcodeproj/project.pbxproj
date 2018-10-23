@@ -19,6 +19,8 @@
 		09539270204EE1930069F35A /* ORB_Eye_Diff.png in Resources */ = {isa = PBXBuildFile; fileRef = 0953926D204EE1920069F35A /* ORB_Eye_Diff.png */; };
 		09539271204EE1930069F35A /* ORB_Circles_Diff.png in Resources */ = {isa = PBXBuildFile; fileRef = 0953926E204EE1930069F35A /* ORB_Circles_Diff.png */; };
 		095CA43A2039F1AE0013FBF1 /* Node+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095CA4392039F1AE0013FBF1 /* Node+Extensions.swift */; };
+		09650B60207D3C5C000E1EB9 /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09650B5F207D3C5C000E1EB9 /* Plane.swift */; };
+		09650B63207D3E55000E1EB9 /* plane_grid.png in Resources */ = {isa = PBXBuildFile; fileRef = 09650B62207D3E55000E1EB9 /* plane_grid.png */; };
 		09767F1B204091F900F29DE7 /* Sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09767F1A204091F900F29DE7 /* Sphere.swift */; };
 		09767F1D2045A25200F29DE7 /* sphere.dae in Resources */ = {isa = PBXBuildFile; fileRef = 09767F1C2045A25100F29DE7 /* sphere.dae */; };
 /* End PBXBuildFile section */
@@ -38,6 +40,8 @@
 		0953926D204EE1920069F35A /* ORB_Eye_Diff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ORB_Eye_Diff.png; sourceTree = "<group>"; };
 		0953926E204EE1930069F35A /* ORB_Circles_Diff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ORB_Circles_Diff.png; sourceTree = "<group>"; };
 		095CA4392039F1AE0013FBF1 /* Node+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Node+Extensions.swift"; sourceTree = "<group>"; };
+		09650B5F207D3C5C000E1EB9 /* Plane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
+		09650B62207D3E55000E1EB9 /* plane_grid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = plane_grid.png; sourceTree = "<group>"; };
 		09767F1A204091F900F29DE7 /* Sphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sphere.swift; sourceTree = "<group>"; };
 		09767F1C2045A25100F29DE7 /* sphere.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; path = sphere.dae; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,6 +93,7 @@
 		092A3E8B20377F56006A8935 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				09650B61207D3DF3000E1EB9 /* Plane */,
 				0953926C204EE1920069F35A /* ORB_Body_Diff.png */,
 				0953926E204EE1930069F35A /* ORB_Circles_Diff.png */,
 				0953926D204EE1920069F35A /* ORB_Eye_Diff.png */,
@@ -115,10 +120,19 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		09650B61207D3DF3000E1EB9 /* Plane */ = {
+			isa = PBXGroup;
+			children = (
+				09650B62207D3E55000E1EB9 /* plane_grid.png */,
+			);
+			path = Plane;
+			sourceTree = "<group>";
+		};
 		09767F19204091E600F29DE7 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
 				09767F1A204091F900F29DE7 /* Sphere.swift */,
+				09650B5F207D3C5C000E1EB9 /* Plane.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -183,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				09539270204EE1930069F35A /* ORB_Eye_Diff.png in Resources */,
+				09650B63207D3E55000E1EB9 /* plane_grid.png in Resources */,
 				09767F1D2045A25200F29DE7 /* sphere.dae in Resources */,
 				092A3E8420372FCB006A8935 /* LaunchScreen.storyboard in Resources */,
 				092A3E8120372FCB006A8935 /* Assets.xcassets in Resources */,
@@ -205,6 +220,7 @@
 				09206D3F205187B500A04B19 /* UtilityExtensions.swift in Sources */,
 				095CA43A2039F1AE0013FBF1 /* Node+Extensions.swift in Sources */,
 				092A3E7C20372FCB006A8935 /* ViewController.swift in Sources */,
+				09650B60207D3C5C000E1EB9 /* Plane.swift in Sources */,
 				092A3E7820372FCB006A8935 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -346,6 +362,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3GU23X3P3D;
 				INFOPLIST_FILE = "$(SRCROOT)/ARGuide/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aboveground.ARWalkthrough;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -363,6 +380,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3GU23X3P3D;
 				INFOPLIST_FILE = "$(SRCROOT)/ARGuide/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aboveground.ARWalkthrough;
 				PRODUCT_NAME = "$(TARGET_NAME)";

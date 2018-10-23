@@ -37,6 +37,17 @@ extension SCNNode {
         } else {
             return self
         }
-
     }
+    
+    public func centerPivot() {
+        var min = SCNVector3Zero
+        var max = SCNVector3Zero
+        (min, max) = self.boundingBox
+        self.pivot = SCNMatrix4MakeTranslation(
+            min.x + (max.x - min.x)/2,
+            min.y + (max.y - min.y)/2,
+            min.z + (max.z - min.z)/2
+        )
+    }
+
 }

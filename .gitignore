@@ -65,3 +65,5 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
+ARGuide/Assets.xcassets/.DS_Store
+ARGuide/Models/.DS_Store
